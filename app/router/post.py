@@ -11,8 +11,8 @@ router = APIRouter(
     tags=['Posts']
 )
 
-@router.get("/", response_model= List[schemas.PostResponse])
-# @router.get("/", response_model= List[schemas.PostOut])
+# @router.get("/", response_model= List[schemas.PostResponse])
+@router.get("/", response_model= List[schemas.PostOut])
 def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), 
               limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     # cursor.execute('''SELECT * FROM posts''')
@@ -24,7 +24,7 @@ def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.
                        ).join(models.Vote, models.Vote.post_id == models.Post.id, isouter= True).group_by(models.Post.id).filter(
         models.Post.title.contains(search)).limit(limit).offset(skip).all()
     
-    return posts
+    return results
 
 
 @router.post("/", status_code= status.HTTP_201_CREATED, response_model= schemas.PostResponse)
